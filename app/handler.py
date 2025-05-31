@@ -5,22 +5,22 @@ from dotenv import load_dotenv
 load_dotenv()
 from app.gpt_api import generate_recipe
 from app.recognition import recognize_ingridients
-from app.db import save_message
 from app.config import TELEGRAM_TOKEN
-import asyncio
+
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 MENU_BUTTONS = [
     "Отправить продукты текстом",
     "Распознать продукты с фото",
-    "История запросов"
 ]
 
 def main_keyboard():
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(*[types.KeyboardButton(btn) for btn in MENU_BUTTONS])
     return keyboard
+
+
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -30,6 +30,7 @@ def send_welcome(message):
         reply_markup=main_keyboard()
     )
 
+
 @bot.message_handler(func=lambda m: m.text == "Отправить продукты текстом")
 def menu_text(message):
     bot.send_message(message.chat.id, "Введите список ингредиентов через запятую:")
@@ -38,9 +39,6 @@ def menu_text(message):
 def menu_photo(message):
     bot.send_message(message.chat.id, "Отправь фотографию с продуктами, которые хочешь распознать")
 
-@bot.message_handler(func=lambda m: m.text == "История запросов")
-def menu_history(message):
-    bot.send_message(message.chat.id, "Функция еще не реализована")
 
 @bot.message_handler(func=lambda m: m.text and m.text not in MENU_BUTTONS)
 def handle_text(message):
@@ -51,7 +49,6 @@ def handle_text(message):
         return
     recipe = generate_recipe(ingredients)
     bot.reply_to(message, recipe)
-    asyncio.create_task(save_message(message.from_user.id, message.from_user.username, message.text, recipe, 0))
 
 @bot.message_handler(content_types=['photo'])
 def handle_photo(message):
@@ -68,11 +65,8 @@ def handle_photo(message):
     else:
         recipe = generate_recipe(ingredients)
         bot.reply_to(message, f"Распознал: {', '.join(ingredients)}\n\n{recipe}")
-    asyncio.create_task(save_message(
-        message.from_user.id,
-        message.from_user.username,
-        "PHOTO",
-        recipe,
-        1
-    ))
     os.remove(img_path)
+
+@bot.message_handler(func=lambda m: True)
+def debug_all(message):
+    print("DEBUG TEXT:", repr(message.text), flush=True)

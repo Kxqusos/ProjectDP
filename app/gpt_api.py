@@ -10,7 +10,7 @@ def generate_recipe(ingredients: list[str]) -> str:
     )
     try:
         response = g4f.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o",
             messages=[{"role": "user", "content": prompt}],
             stream=False
         )

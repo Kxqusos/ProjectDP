@@ -4,7 +4,6 @@ from telebot import types
 from dotenv import load_dotenv
 load_dotenv()
 from app.config import PORT, WEBHOOK_URL
-from app.db import init_db
 from app.handler import bot
 
 
@@ -17,8 +16,7 @@ async def webhook(req: Request, background_tasks: BackgroundTasks):
     return {"ok": True}
 
 @app.on_event("startup")
-async def on_startup():
-    await init_db()
+def on_startup():
     bot.remove_webhook()
     if WEBHOOK_URL:
         bot.set_webhook(url=WEBHOOK_URL)
