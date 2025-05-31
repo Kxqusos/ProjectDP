@@ -2,13 +2,15 @@ import g4f
 
 def generate_recipe(ingredients: list[str]) -> str:
     prompt = (
-        f"У меня есть такие продукты: {', '.join(ingredients)}. "
+        f"У меня есть такие продукты: {', '.join(ingredients)}. " \
         "Предложи подробный пошаговый рецепт их приготовления на русском языке." \
-        "Также не размечай текст жирным через **"
+        "В конце говори только Приятного аппетита" \
+        "Также не размечай текст жирным через **" \
+        "Используй только русский язык"
     )
     try:
         response = g4f.ChatCompletion.create(
-            model="gpt-4o",
+            model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
             stream=False
         )

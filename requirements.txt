@@ -2,7 +2,7 @@ pyTelegramBotAPI==4.27.0
 fastapi==0.108.0
 uvicorn[standard]==0.23.1
 python-dotenv==1.0.1
-g4f>=0.3.0.7
+g4f
 pydantic>=2.0.0
 requests>=2.31.0
 aiosqlite
